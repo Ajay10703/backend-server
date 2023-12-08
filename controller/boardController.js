@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 module.exports.getAllBoard = async (req, res) => {
   const { name, data } = req.user;
   console.log(req.user);
-  const Boards = await BoardList.find({ admin: data });
+  const Boards = await BoardList.find({ admin: { name: name, email: data } });
   const Boards2 = await BoardList.find({ users: { name: name, email: data } });
   let boardexist = [...Boards, ...Boards2];
   if (boardexist[0]) {
@@ -51,9 +51,12 @@ module.exports.CraeteBoard = (req, res) => {
     });
 };
 module.exports.AddUserInBoard = async (req, res) => {
-  const { data } = req.user;
+  const { name, data } = req.user;
   const { user, id } = req.body;
-  const boardexist = await BoardList.findOne({ admin: data, adminId: id });
+  const boardexist = await BoardList.findOne({
+    admin: { name: name, email: data },
+    adminId: id,
+  });
   if (user === undefined || !user) {
     return res.status(401).send({ message: "email is required" });
   }
