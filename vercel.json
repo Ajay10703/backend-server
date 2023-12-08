@@ -1,0 +1,4 @@
+{ "version": 2,
+"name":"Lets-Board-server",
+ "builds": [ { "src": "server.js", "use": "@vercel/node" } ],
+  "routes": [ { "src": "/(.*)", "dest": "/server.js" } ] } 
