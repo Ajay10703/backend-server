@@ -124,7 +124,7 @@ module.exports.getSingleBoard = (req, res) => {
   const { id } = req.query;
   BoardList.findOne({ adminId: id })
     .then((response) => {
-      let isAdmin = data === response.admin;
+      let isAdmin = data.email === response.admin.email;
       let DATA = isAdmin
         ? {
             admin: response.admin,
