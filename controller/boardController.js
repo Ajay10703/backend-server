@@ -99,7 +99,7 @@ module.exports.AddUserInBoard = async (req, res) => {
       console.log(userexist);
       if (userexist === true || userpresent.length == 0) {
         BoardList.findByIdAndUpdate(boardexist.id, {
-          users: [...boardexist?.users, { name: User.User, email: User.email }],
+          users: [...boardexist?.users, { name: User.name, email: User.email }],
         })
           .then((data) => {
             console.log("user added successfully");
