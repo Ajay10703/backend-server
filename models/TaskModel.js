@@ -7,20 +7,31 @@ const tasksSchema = new mongoose.Schema({
   desc: {
     type: String,
   },
-  user: {
-    type: String,
-    required: true,
+  createdBy: {
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+  },
+  updatedBy: {
+    name: { type: String },
+    email: { type: String },
+  },
+  createdOn: {
+    type: Date,
+  },
+  updatedOn: {
+    type: Date,
   },
   adminId: {
     type: String,
     required: true,
   },
+  assign: {
+    name: { type: String },
+    email: { type: String },
+  },
   completeStatus: {
     type: String,
     required: true,
-  },
-  createdOn: {
-    type: Date,
   },
 });
 tasksSchema.set("toJSON", {

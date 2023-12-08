@@ -5,18 +5,26 @@ const boardSchema = new mongoose.Schema({
     required: true,
   },
   admin: {
-    type: String,
-    required: true,
+    name: { type: String, required: true },
+    email: { type: String, required: true },
   },
   adminId: {
     type: String,
     required: true,
   },
-  boardKey: {
-    type: String,
+  createdOn: {
+    type: Date,
+  },
+  updatedOn: {
+    type: Date,
   },
   users: {
-    type: Array,
+    type: [
+      {
+        name: { type: String },
+        email: { type: String },
+      },
+    ],
   },
 });
 boardSchema.set("toJSON", {

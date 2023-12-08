@@ -26,14 +26,14 @@ module.exports.getCompleteTask = async (req, res) => {
   });
 };
 module.exports.saveTask = (req, res) => {
-  console.log(req);
-  const { data } = req.user;
+  console.log(req.user);
+  const { name, data } = req.user;
   const { title, desc, adminId } = req.body;
   TaskList.create({
     title,
     desc,
     adminId,
-    user: data,
+    createdBy: { name: name, email: data },
     completeStatus: "incomplete",
     createdOn: new Date(),
   })
@@ -50,8 +50,14 @@ module.exports.saveTask = (req, res) => {
     });
 };
 module.exports.updateTask = (req, res) => {
+  const { name, data } = req.user;
   const { title, desc, id } = req.body;
-  TaskList.findByIdAndUpdate(id, { title, desc })
+  TaskList.findByIdAndUpdate(id, {
+    title,
+    desc,
+    updatedBy: { name: name, email: data },
+    updatedOn: new Date(),
+  })
     .then((data) => {
       console.log("updated successfully");
       console.log(data);
@@ -62,8 +68,13 @@ module.exports.updateTask = (req, res) => {
     });
 };
 module.exports.updateTaskStatus = (req, res) => {
+  const { name, data } = req.user;
   const { status, id } = req.body;
-  TaskList.findByIdAndUpdate(id, { completeStatus: status })
+  TaskList.findByIdAndUpdate(id, {
+    completeStatus: status,
+    updatedBy: { name: name, email: data },
+    updatedOn: new Date(),
+  })
     .then((data) => {
       console.log("updated successfully");
       console.log(data);

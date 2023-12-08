@@ -29,7 +29,7 @@ const login = async ({ email, password }, res) => {
   const user = await userList.findOne({ email });
   if (user != null) {
     if (bcrypt.compareSync(password, user.password)) {
-      const token = auth.generateAccessToken(email);
+      const token = auth.generateAccessToken(user.name, email);
       return res(null, { ...user.toJSON(), token });
     } else {
       return res({

@@ -2,9 +2,10 @@ const BoardList = require("../models/BoardModel");
 const userList = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 module.exports.getAllBoard = async (req, res) => {
-  const { data } = req.user;
+  const { name, data } = req.user;
+  console.log(req.user);
   const Boards = await BoardList.find({ admin: data });
-  const Boards2 = await BoardList.find({ users: data });
+  const Boards2 = await BoardList.find({ users: { name: name, email: data } });
   let boardexist = [...Boards, ...Boards2];
   if (boardexist[0]) {
     res.send(
@@ -23,12 +24,20 @@ module.exports.getAllBoard = async (req, res) => {
 };
 module.exports.CraeteBoard = (req, res) => {
   console.log(req);
-  const { data } = req.user;
+  const { name, data } = req.user;
   const { title } = req.body;
 
   const salt = bcrypt.genSaltSync(10);
   req.user.data = bcrypt.hashSync(data, salt);
-  BoardList.create({ title, admin: data, adminId: req.user.data })
+  BoardList.create({
+    title,
+    admin: {
+      name: name,
+      email: data,
+    },
+    adminId: req.user.data,
+    createdOn: new Date(),
+  })
     .then((data) => {
       console.log("board created successfully");
       console.log(data);
@@ -79,7 +88,7 @@ module.exports.AddUserInBoard = async (req, res) => {
       if (boardexist.users?.length > 0) {
         userexist = false;
         userpresent = boardexist.users.filter((e) => {
-          return e === user;
+          return e.email === user;
         });
       } else {
         userexist = true;
@@ -87,7 +96,7 @@ module.exports.AddUserInBoard = async (req, res) => {
       console.log(userexist);
       if (userexist === true || userpresent.length == 0) {
         BoardList.findByIdAndUpdate(boardexist.id, {
-          users: [...boardexist?.users, user],
+          users: [...boardexist?.users, { name: User.User, email: User.email }],
         })
           .then((data) => {
             console.log("user added successfully");
@@ -136,7 +145,7 @@ module.exports.getSingleBoard = (req, res) => {
 };
 module.exports.updateBoard = (req, res) => {
   const { title, id } = req.body;
-  BoardList.findByIdAndUpdate(id, { title })
+  BoardList.findByIdAndUpdate(id, { title, updatedOn: new Date() })
     .then((data) => {
       console.log("updated successfully");
       console.log(data);
