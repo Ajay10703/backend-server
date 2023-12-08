@@ -5,7 +5,9 @@ module.exports.getAllBoard = async (req, res) => {
   const { name, data } = req.user;
   console.log(req.user);
   const Boards = await BoardList.find({ admin: { name: name, email: data } });
-  const Boards2 = await BoardList.find({ users: { name: name, email: data } });
+  const Boards2 = await BoardList.find({
+    users: [{ name: name, email: data }],
+  });
   let boardexist = [...Boards, ...Boards2];
   if (boardexist[0]) {
     res.send(
