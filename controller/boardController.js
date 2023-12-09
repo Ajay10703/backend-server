@@ -4,25 +4,29 @@ const bcrypt = require("bcryptjs");
 module.exports.getAllBoard = async (req, res) => {
   const { name, data } = req.user;
   console.log(req.user);
-  const Boards = await BoardList.find({ admin: { name: name, email: data } });
-  const Boards2 = await BoardList.find({
-    users: [{ name: name, email: data }],
-  });
-  let boardexist = [...Boards, ...Boards2];
-  if (boardexist[0]) {
-    res.send(
-      boardexist.map((e) => {
-        return {
-          title: e.title,
-          adminId: e.adminId,
-        };
-      })
-    );
-  } else {
-    return res.status(401).send({
-      message: "board not found",
+  // const Boards = await BoardList.find({ admin: { name: name, email: data } });
+  BoardList.find({
+    $or: [
+      { admin: { name: name, email: data } },
+      { users: { $elemMatch: { name: name, email: data } } },
+    ],
+  })
+    .then((response) => {
+      console.log(response);
+      res.send(
+        response.map((e) => {
+          return {
+            title: e.title,
+            adminId: e.adminId,
+          };
+        })
+      );
+    })
+    .catch((err) => {
+      res.status(401).send({
+        message: "board not found",
+      });
     });
-  }
 };
 module.exports.CraeteBoard = (req, res) => {
   console.log(req);
